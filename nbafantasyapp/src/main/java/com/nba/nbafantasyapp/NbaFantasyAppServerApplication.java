@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.Arrays;
 import java.util.List;
 
 @SpringBootApplication
@@ -29,16 +30,18 @@ public class NbaFantasyAppServerApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         log.info("The CommandLineRunner has started...");
         Pageable page = PageRequest.of(0, 50);
-        Page<Player> listOfPlayers = playerRepository.findAllPlayersAndSortByName(page);
-        Iterable<Player> players = listOfPlayers.getContent();
 
-        while (listOfPlayers.hasNext()) {
-            for (Player player : players) {
-                log.info(player.getFirstName() + " " + player.getLastName());
+        while (true) {
+            Page<Player> playerPage = playerRepository.findAllPlayersAndSortByName(page);
+            for (Player player : playerPage.getContent()) {
+                log.info("{} {}", player.getFirstName(), player.getLastName());
             }
 
-            listOfPlayers = playerRepository.findAllPlayersAndSortByName(listOfPlayers.nextPageable());
-            players = listOfPlayers.getContent();
+            if (!playerPage.hasNext()) {
+                break;
+            }
+            page = playerPage.nextPageable();
         }
     }
+
 }

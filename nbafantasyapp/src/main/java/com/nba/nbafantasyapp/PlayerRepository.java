@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface PlayerRepository extends PagingAndSortingRepository<Player, Integer> {
     @Query(value = "SELECT * FROM player ORDER BY last_name",
@@ -15,4 +17,11 @@ public interface PlayerRepository extends PagingAndSortingRepository<Player, Int
 
     @Query(value = "SELECT * FROM player WHERE player_id = :playerId", nativeQuery = true)
     Player findPlayerById(int playerId);
+
+    @Query(value = "SELECT * FROM team ORDER BY full_name", nativeQuery = true)
+    List<Team> findAllTeams();
+
+    @Query(value = "SELECT * FROM team WHERE team_id = :teamId", nativeQuery = true)
+    Team findTeamById(int teamId);
+
 }
