@@ -18,6 +18,9 @@ public interface PlayerRepository extends PagingAndSortingRepository<Player, Int
     @Query(value = "SELECT * FROM player WHERE player_id = :playerId", nativeQuery = true)
     Player findPlayerById(int playerId);
 
+    @Query(value = "SELECT * FROM player JOIN team ON player.team_id = team.team_id WHERE team.team_id = :teamId ORDER BY full_name", nativeQuery = true)
+    List<Player> findPlayersByTeam(int teamId);
+
     @Query(value = "SELECT * FROM team ORDER BY full_name", nativeQuery = true)
     List<Team> findAllTeams();
 
