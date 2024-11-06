@@ -1,8 +1,7 @@
-package com.nba.nbafantasyapp;
+package com.nba.nbafantasyapp.team;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Team {
     @Id
-    private int teamId;  // Primary Key
+    private long teamId;  // Primary Key
+
     private String abbreviation;
     private String fullName;
     private String city;

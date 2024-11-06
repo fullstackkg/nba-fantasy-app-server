@@ -1,5 +1,6 @@
-package com.nba.nbafantasyapp;
+package com.nba.nbafantasyapp.player;
 
+import com.nba.nbafantasyapp.team.Team;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -16,7 +17,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class Player {
     @Id
-    private int playerId;  // Primary Key
+    private long playerId;  // Primary Key
 
     private String firstName;
     private String lastName;
