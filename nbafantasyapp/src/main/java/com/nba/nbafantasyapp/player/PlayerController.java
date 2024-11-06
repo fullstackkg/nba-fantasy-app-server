@@ -14,6 +14,7 @@ public class PlayerController {
         this.playerService = playerService;
     }
 
+    // GET REQUESTS
     @GetMapping
     public PagedModel<Player> getAllPlayers(@RequestParam int pageNumber, @RequestParam int pageSize) {
         Page<Player> page = playerService.findAll(pageNumber, pageSize);

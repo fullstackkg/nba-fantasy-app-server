@@ -17,19 +17,15 @@ public class PlayerService {
         this.allPlayers = playerRepository.findAll();
     }
 
-    // GET REQUESTS
-    // GET ALL THE PLAYERS
     Page<Player> findAll(int pageNumber, int pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         return playerRepository.findAllSortByName(pageRequest);
     }
 
-    // GET ALL THE PLAYERS FROM A SPECIFIC TEAM
     List<Player> findByTeam(long teamId) {
         return playerRepository.findByTeam(teamId);
     }
 
-    // GET A PLAYER BY ID
     Optional<Player> findPlayer(long playerId) {
         for (Player player : allPlayers) {
             if (player.getPlayerId() == playerId) {

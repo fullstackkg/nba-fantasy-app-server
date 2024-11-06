@@ -15,13 +15,10 @@ public class TeamService {
         this.allTeams = teamRepository.findAll();
     }
 
-    // GET REQUESTS
-    // GET ALL TEAMS
     public List<Team> findAll() {
         return teamRepository.findAll();
     }
 
-    // GET TEAM BY ID
     public Optional<Team> findById(long id) {
         for (Team team : allTeams) {
             if (team.getTeamId() == id) {
