@@ -1,16 +1,16 @@
 package com.nba.nbafantasyapp.team;
 
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 public interface TeamRepository extends PagingAndSortingRepository<Team, Long> {
-    @Query(value = "SELECT * FROM team ORDER BY full_name", nativeQuery = true)
-    List<Team> findAll();
+    @Query("SELECT * FROM team ORDER BY full_name")
+    Flux<Team> findAll();
 
-    @Query(value = "SELECT * FROM TEAM WHERE team_id = :teamId", nativeQuery = true)
-    Team findById(long teamId);
+    @Query("SELECT * FROM TEAM WHERE team_id = :teamId")
+    Mono<Team> findByTeamId(long teamId);
 }

@@ -1,31 +1,20 @@
 package com.nba.nbafantasyapp.team;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
-
+@RequiredArgsConstructor
 @Service
 public class TeamService {
     private final TeamRepository teamRepository;
-    private final List<Team> allTeams;
 
-    public TeamService(TeamRepository teamRepository) {
-        this.teamRepository = teamRepository;
-        this.allTeams = teamRepository.findAll();
-    }
-
-    public List<Team> findAll() {
+    public Flux<Team> findAllTeams() {
         return teamRepository.findAll();
     }
 
-    public Optional<Team> findById(long id) {
-        for (Team team : allTeams) {
-            if (team.getTeamId() == id) {
-                return Optional.of(team);
-            }
-        }
-
-        return Optional.empty();
+    public Mono<Team> findByTeamId(long teamId) {
+        return teamRepository.findByTeamId(teamId);
     }
 }

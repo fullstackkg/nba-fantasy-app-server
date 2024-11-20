@@ -1,28 +1,35 @@
 package com.nba.nbafantasyapp.player;
 
-import org.springframework.data.domain.Page;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.web.PagedModel;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/players")
+@RequestMapping("/api/players")
 public class PlayerController {
     private final PlayerService playerService;
 
-    public PlayerController(PlayerService playerService) {
-        this.playerService = playerService;
-    }
-
     // GET REQUESTS
     @GetMapping
-    public PagedModel<Player> getAllPlayers(@RequestParam int pageNumber, @RequestParam int pageSize) {
-        Page<Player> page = playerService.findAll(pageNumber, pageSize);
-        return new PagedModel<>(page);
+    public Flux<Player> getAllPlayers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size
+    ) {
+        return playerService.findAllPlayers(page, size);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Player> getPlayerById(@PathVariable long id) {
-        return playerService.findPlayer(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    @GetMapping("/{playerId}")
+    public Mono<ResponseEntity<Player>> getPlayerById(@PathVariable long playerId) {
+        return playerService.findPlayerById(playerId)
+                .map(player -> ResponseEntity.ok(player))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/team/{teamId}")
+    public Flux<Player> getPlayerByTeamId(@PathVariable long teamId) {
+        return playerService.findPlayerByTeamId(teamId).switchIfEmpty(Flux.empty());
     }
 }

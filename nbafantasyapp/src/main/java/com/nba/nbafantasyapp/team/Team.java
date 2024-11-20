@@ -1,19 +1,14 @@
 package com.nba.nbafantasyapp.team;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.annotation.Id;
 
 @Data
-@Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Team {
     @Id
-    private long teamId;  // Primary Key
-
+    private Long teamId;  // Primary Key
     private String abbreviation;
     private String fullName;
     private String city;

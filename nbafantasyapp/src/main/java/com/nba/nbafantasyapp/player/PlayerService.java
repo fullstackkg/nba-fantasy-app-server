@@ -1,38 +1,27 @@
 package com.nba.nbafantasyapp.player;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
-
+@RequiredArgsConstructor
 @Service
 public class PlayerService {
     private final PlayerRepository playerRepository;
-    private final List<Player> allPlayers;
 
-    public PlayerService(PlayerRepository playerRepository) {
-        this.playerRepository = playerRepository;
-        this.allPlayers = playerRepository.findAll();
+    public Flux<Player> findAllPlayers(int page, int size) {
+        return playerRepository.findAll(PageRequest.of(page, size));
     }
 
-    Page<Player> findAll(int pageNumber, int pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-        return playerRepository.findAllSortByName(pageRequest);
+    public Mono<Player> findPlayerById(long playerId) {
+        return playerRepository.findByPlayerId(playerId);
     }
 
-    List<Player> findByTeam(long teamId) {
-        return playerRepository.findByTeam(teamId);
-    }
-
-    Optional<Player> findPlayer(long playerId) {
-        for (Player player : allPlayers) {
-            if (player.getPlayerId() == playerId) {
-                return Optional.of(allPlayers.get(allPlayers.indexOf(player)));
-            }
-        }
-
-        return Optional.empty();
+    public Flux<Player> findPlayerByTeamId(long teamId) {
+        return playerRepository.findByTeamId(teamId);
     }
 }

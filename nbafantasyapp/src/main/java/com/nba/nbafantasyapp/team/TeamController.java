@@ -1,31 +1,30 @@
 package com.nba.nbafantasyapp.team;
 
+import com.nba.nbafantasyapp.player.Player;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import javax.swing.text.html.Option;
-import java.util.List;
-import java.util.Optional;
-
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/teams")
+@RequestMapping("/api/teams")
 public class TeamController {
-    private TeamService teamService;
+    private final TeamService teamService;
 
-    public TeamController(TeamService teamService) {
-        this.teamService = teamService;
+    @GetMapping
+    public Flux<Team> getAllTeams() {
+        return teamService.findAllTeams();
     }
 
-    // GET REQUESTS
-    @GetMapping("")
-    public List<Team> getAllTeams() {
-        return teamService.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public Optional<Team> getTeamById(@PathVariable long id) {
-        return teamService.findById(id);
+    @GetMapping("/{teamId}")
+    public Mono<ResponseEntity<Team>> getTeamById(@PathVariable long teamId) {
+        return teamService.findByTeamId(teamId)
+                .map(team -> ResponseEntity.ok(team))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }
