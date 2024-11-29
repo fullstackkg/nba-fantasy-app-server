@@ -24,7 +24,13 @@ public class TeamController {
     @GetMapping("/{teamId}")
     public Mono<ResponseEntity<Team>> getTeamById(@PathVariable long teamId) {
         return teamService.findByTeamId(teamId)
-                .map(team -> ResponseEntity.ok(team))
+                .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{teamId}/players")
+    public Flux<Player> getPlayersByTeamId(@PathVariable long teamId) {
+        return teamService.findPlayersByTeamId(teamId)
+                .switchIfEmpty(Flux.empty());
     }
 }
