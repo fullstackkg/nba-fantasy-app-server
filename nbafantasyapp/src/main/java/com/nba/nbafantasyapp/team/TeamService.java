@@ -21,7 +21,7 @@ public class TeamService {
         return teamRepository.findByTeamId(teamId);
     }
 
-    public Flux<Player> findPlayersByTeamId(long teamId) {
-        return playerRepository.findPlayerByTeamId(teamId);
-    }
+//    public Flux<Player> findPlayersByTeamId(long teamId) {
+//        return playerRepository.findPlayerByTeamId(teamId);
+//    }
 }

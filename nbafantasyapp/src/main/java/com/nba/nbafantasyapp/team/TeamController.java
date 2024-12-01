@@ -28,9 +28,9 @@ public class TeamController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{teamId}/players")
-    public Flux<Player> getPlayersByTeamId(@PathVariable long teamId) {
-        return teamService.findPlayersByTeamId(teamId)
-                .switchIfEmpty(Flux.empty());
-    }
+//    @GetMapping("/{teamId}/players")
+//    public Flux<Player> getPlayersByTeamId(@PathVariable long teamId) {
+//        return teamService.findPlayersByTeamId(teamId)
+//                .switchIfEmpty(Flux.empty());
+//    }
 }

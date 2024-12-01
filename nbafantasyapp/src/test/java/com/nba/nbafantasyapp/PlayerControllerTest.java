@@ -8,12 +8,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 
@@ -65,25 +69,32 @@ public class PlayerControllerTest {
                 "https://cdn.nba.com/logos/nba/1610612745/global/L/logo.svg"
         );
 
-        Flux<PlayerDTO> playerFlux = Flux.just(player1, player2);
+        PageRequest pageRequest = PageRequest.of(0, 50);
+        List<PlayerDTO> playerList = List.of(player1, player2);
+        Page<PlayerDTO> playerPage = new PageImpl<>(playerList, pageRequest, playerList.size());
 
         // Mock service response
-        when(playerService.findAllPlayerDTO(0)).thenReturn(Page<PlayerDTO>);
+        when(playerService.findAllPlayers(pageRequest)).thenReturn(Mono.just(playerPage));
 
         // Perform test
-        webTestClient.get().uri("/api/players?page=0")
+        webTestClient.get()
+                .uri("/api/players?page=0")
                 .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBodyList(PlayerDTO.class)
-                .hasSize(2)
-                .contains(player1, player2);
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.content").isArray()
+                .jsonPath("$.content[0].firstName").isEqualTo("Precious")
+                .jsonPath("$.content[1].firstName").isEqualTo("Steven")
+                .jsonPath("$.totalElements").isEqualTo(2)
+                .jsonPath("$.number").isEqualTo(0)
+                .jsonPath("$.size").isEqualTo(50);
     }
+
 
     @Test
     public void testGetPlayerById() {
         // Mock data
-        Player player1 = new Player(
+        PlayerDTO player1 = new PlayerDTO(
                 1630173L,
                 "Precious",
                 "Achiuwa",
@@ -93,11 +104,15 @@ public class PlayerControllerTest {
                 (byte) 4,
                 (byte) 5,
                 "Forward",
+                "https://cdn.nba.com/headshots/nba/latest/1040x760/1630173.png",
                 1610612752L,
-                "https://cdn.nba.com/headshots/nba/latest/1040x760/1630173.png"
+                "New York Knicks",
+                "Eastern",
+                "Atlantic",
+                "https://cdn.nba.com/logos/nba/1610612752/global/L/logo.svg"
         );
 
-        Mono<Player> playerMono = Mono.just(player1);
+        Mono<PlayerDTO> playerMono = Mono.just(player1);
 
         // Mock service response
         when(playerService.findPlayerById(player1.getPlayerId())).thenReturn(playerMono);
@@ -107,51 +122,5 @@ public class PlayerControllerTest {
                 .exchange().expectStatus()
                 .isOk()
                 .expectBody(Player.class);
-    }
-
-    @Test
-    public void testGetPlayerByTeamId() {
-        // Mock data
-        Player player1 = new Player(
-                1630173L,
-                "Precious",
-                "Achiuwa",
-                LocalDate.of(1999, Month.SEPTEMBER, 19),
-                "6-8",
-                (short) 243,
-                (byte) 4,
-                (byte) 5,
-                "Forward",
-                1610612752L,
-                "https://cdn.nba.com/headshots/nba/latest/1040x760/1630173.png"
-        );
-
-        Player player2 = new Player(
-                1628384L,
-                "OG",
-                "Anunoby",
-                LocalDate.of(1997, Month.JULY, 17),
-                "6-7",
-                (short) 240,
-                (byte) 7,
-                (byte) 8,
-                "Forward-Guard",
-                1610612752L,
-                "https://cdn.nba.com/headshots/nba/latest/1040x760/1628384.png"
-        );
-
-        Flux<Player> playerFlux = Flux.just(player1, player2);
-
-        // Mock service response
-        when(playerService.findPlayerByTeamId(player1.getTeamId())).thenReturn(playerFlux);
-
-        // Perform test
-        webTestClient.get().uri("/api/players/team/" + player1.getTeamId())
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBodyList(Player.class)
-                .hasSize(2)
-                .contains(player1, player2);
     }
 }

@@ -14,22 +14,14 @@ import reactor.core.publisher.Mono;
 public class PlayerService {
     private final PlayerRepository playerRepository;
 
-    public Flux<Player> findAllPlayers() {
-        return playerRepository.findAll();
-    }
-
-    public Mono<Page<PlayerDTO>> findAllPlayerDTO(PageRequest pageRequest) {
-        return playerRepository.findAllPlayersWithTeam(pageRequest)
+    public Mono<Page<PlayerDTO>> findAllPlayers(PageRequest pageRequest) {
+        return playerRepository.findAllPlayers(pageRequest)
                 .collectList()
                 .zipWith(playerRepository.count())
-                .map(player -> new PageImpl<>(player.getT1(), pageRequest, player.getT2()));
+                .map(playerTuple -> new PageImpl<>(playerTuple.getT1(), pageRequest, playerTuple.getT2()));
     }
 
-    public Mono<Player> findPlayerById(long playerId) {
-        return playerRepository.findByPlayerId(playerId);
-    }
-
-    public Flux<Player> findPlayerByTeamId(long teamId) {
-        return playerRepository.findPlayerByTeamId(teamId);
+    public Mono<PlayerDTO> findPlayerById(long playerId) {
+        return playerRepository.findPlayerById(playerId);
     }
 }
